@@ -5,15 +5,36 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [offset, setOffset] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const limit = 5;
+
+  const fetchAdvocates = async (queryOffset: number) => {
+    try {
+      const response = await fetch(`/api/advocates?offset=${queryOffset}&limit=${limit}`);
+      
+      const jsonData = await response.json();
+
+      if (jsonData.data.length === 0) {
+        setHasMore(false);
+      } else {
+        if (queryOffset === 0) {
+          setAdvocates(jsonData.data);
+          setFilteredAdvocates(jsonData.data);
+        } else {
+          setAdvocates(prevAdvocates => [...prevAdvocates, ...jsonData.data]);
+          setFilteredAdvocates(prevAdvocates => [...prevAdvocates, ...jsonData.data]);
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    fetchAdvocates(offset);
   }, []);
 
   const onChange = (e) => {
@@ -40,6 +61,12 @@ export default function Home() {
     console.log(advocates);
     setFilteredAdvocates(advocates);
   };
+
+  const loadMore = () => {
+    const nextOffset = offset + limit
+    setOffset(nextOffset);
+    fetchAdvocates(nextOffset);
+  }
 
   return (
     <main style={{ margin: "24px" }}>
@@ -86,6 +113,7 @@ export default function Home() {
           })}
         </tbody>
       </table>
+      { hasMore && (<button onClick={loadMore}>Load More</button>)}
     </main>
   );
 }
