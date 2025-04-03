@@ -1,24 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
   const [offset, setOffset] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const limit = 5;
 
-  const fetchAdvocates = async (queryOffset: number) => {
+  const fetchAdvocates = async (queryOffset: number, search?: string) => {
     try {
-      const response = await fetch(`/api/advocates?offset=${queryOffset}&limit=${limit}`);
+      let url = `/api/advocates?offset=${queryOffset}&limit=${limit}`;
+
+      if (search) {
+        const queryString = encodeURIComponent(search);
+        url += `&queryString=${queryString}`;
+      }
+
+      const response = await fetch(url);
       
       const jsonData = await response.json();
 
       if (jsonData.data.length === 0) {
         setHasMore(false);
       } else {
+        if (jsonData.data.length < limit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+
         if (queryOffset === 0) {
           setAdvocates(jsonData.data);
           setFilteredAdvocates(jsonData.data);
@@ -32,34 +45,30 @@ export default function Home() {
     }
   }
 
+  const reset = () => {
+    setOffset(0);
+    fetchAdvocates(0);
+  }
+
   useEffect(() => {
     console.log("fetching advocates...");
     fetchAdvocates(offset);
   }, []);
 
-  const onChange = (e) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
 
-    document.getElementById("search-term").innerHTML = searchTerm;
+    setSearchTerm(searchTerm);
 
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    if (searchTerm.length > 0) {
+      fetchAdvocates(offset, searchTerm);
+    } else {
+      reset();
+    }
   };
 
   const onClick = () => {
-    console.log(advocates);
-    setFilteredAdvocates(advocates);
+    reset();
   };
 
   const loadMore = () => {
@@ -76,7 +85,7 @@ export default function Home() {
       <div>
         <p>Search</p>
         <p>
-          Searching for: <span id="search-term"></span>
+          Searching for: <span id="search-term">{searchTerm}</span>
         </p>
         <input style={{ border: "1px solid black" }} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
@@ -94,7 +103,7 @@ export default function Home() {
           <th>Phone Number</th>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate) => {
+          {advocates.map((advocate) => {
             return (
               <tr>
                 <td>{advocate.firstName}</td>
