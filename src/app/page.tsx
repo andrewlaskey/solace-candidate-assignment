@@ -46,7 +46,7 @@ export default function Home() {
         <label htmlFor="search" className="text-2xl font-bold text-zinc-800">Search</label>
         <div>
           <input id="search" onChange={onChange} className="rounded-md p-2 border-2 border-cyan-900 mr-4"/>
-          <button onClick={onClick} className="bg-cyan-500 rounded-md p-2 text-white">Reset Search</button>
+          <button onClick={onClick} className="bg-cyan-500 rounded-md p-2 text-white hover:bg-cyan-700">Reset Search</button>
         </div>
       </div>
       <h2 className="text-2xl font-bold pt-10 pb-5 text-zinc-800">Results</h2>
