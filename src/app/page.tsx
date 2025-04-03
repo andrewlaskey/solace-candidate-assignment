@@ -43,44 +43,44 @@ export default function Home() {
     <main style={{ margin: "24px" }}>
       <h1 className="text-3xl font-bold py-10 text-zinc-800">Solace Advocates</h1>
       <div className="flex flex-col py-4">
-        <label htmlFor="search" className="text-lg font-bold text-zinc-800">Search</label>
+        <label htmlFor="search" className="text-2xl font-bold text-zinc-800">Search</label>
         <div>
           <input id="search" onChange={onChange} className="rounded-md p-2 border-2 border-cyan-900 mr-4"/>
           <button onClick={onClick} className="bg-cyan-500 rounded-md p-2 text-white">Reset Search</button>
         </div>
       </div>
-      <table className="w-full border-2 border-cyan-900">
-        <thead>
-          <tr className="bg-cyan-900 text-white">
-            <th className="p-2 text-left">First Name</th>
-            <th className="p-2 text-left">Last Name</th>
-            <th className="p-2 text-left">City</th>
-            <th className="p-2 text-left">Degree</th>
-            <th className="p-2 text-left max-w-lg">Specialties</th>
-            <th className="p-2 text-left">Years of Experience</th>
-            <th className="p-2 text-left">Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
+      <h2 className="text-2xl font-bold pt-10 pb-5 text-zinc-800">Results</h2>
+      <div className="w-full border-2 border-cyan-900">
+       {filteredAdvocates.map((advocate) => {
             return (
-              <tr className="odd:bg-white even:bg-gray-300 text-sm">
-                <td className="p-2">{advocate.firstName}</td>
-                <td className="p-2">{advocate.lastName}</td>
-                <td className="p-2">{advocate.city}</td>
-                <td className="p-2">{advocate.degree}</td>
-                <td className="p-2 max-w-lg">
-                  {advocate.specialties.map((s) => (
-                    <div className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-indigo-500 text-white m-1">{s}</div>
-                  ))}
-                </td>
-                <td className="p-2">{advocate.yearsOfExperience}</td>
-                <td className="p-2">{advocate.phoneNumber}</td>
-              </tr>
+              <div className="flex flex-col md:flex-row p-4 odd:bg-white even:bg-gray-200 text-sm" key={advocate.id}>
+                <div className="basis-1/3"> 
+                  <h3 className="text-lg font-bold">{advocate.firstName} {advocate.lastName}, {advocate.degree}</h3>
+                  <div>
+                    <span className="font-bold mr-2">City:</span>
+                    <span>{advocate.city}</span>
+                  </div>
+                  <div>
+                    <span className="font-bold mr-2">Phone:</span>
+                    <a href={`tel:${advocate.phoneNumber}`}>{advocate.phoneNumber}</a>
+                  </div>
+                  <div>
+                    <span className="font-bold mr-2">Years Experience:</span>
+                    <span>{advocate.yearsOfExperience}</span>
+                  </div>
+                </div>
+                <div className="basis-2/3">
+                  <h4 className="font-bold mb-2">Specialties</h4>
+                  <div>
+                    {advocate.specialties.map((s) => (
+                      <div className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-indigo-500 text-white m-1">{s}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             );
           })}
-        </tbody>
-      </table>
+      </div>
     </main>
   );
 }
