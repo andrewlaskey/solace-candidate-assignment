@@ -19,8 +19,6 @@ export default function Home() {
   const onChange = (e) => {
     const searchTerm = e.target.value;
 
-    document.getElementById("search-term").innerHTML = searchTerm;
-
     console.log("filtering advocates...");
     const filteredAdvocates = advocates.filter((advocate) => {
       return (
@@ -43,49 +41,46 @@ export default function Home() {
 
   return (
     <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+      <h1 className="text-3xl font-bold py-10 text-zinc-800">Solace Advocates</h1>
+      <div className="flex flex-col py-4">
+        <label htmlFor="search" className="text-2xl font-bold text-zinc-800">Search</label>
+        <div>
+          <input id="search" onChange={onChange} className="rounded-md p-2 border-2 border-cyan-900 mr-4"/>
+          <button onClick={onClick} className="bg-cyan-500 rounded-md p-2 text-white hover:bg-cyan-700">Reset Search</button>
+        </div>
       </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
+      <h2 className="text-2xl font-bold pt-10 pb-5 text-zinc-800">Results</h2>
+      <div className="w-full border-2 border-cyan-900">
+       {filteredAdvocates.map((advocate) => {
             return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
+              <div className="flex flex-col md:flex-row p-4 odd:bg-white even:bg-gray-200 text-sm" key={advocate.id}>
+                <div className="basis-1/3"> 
+                  <h3 className="text-lg font-bold">{advocate.firstName} {advocate.lastName}, {advocate.degree}</h3>
+                  <div>
+                    <span className="font-bold mr-2">City:</span>
+                    <span>{advocate.city}</span>
+                  </div>
+                  <div>
+                    <span className="font-bold mr-2">Phone:</span>
+                    <a href={`tel:${advocate.phoneNumber}`} className="text-cyan-600">{advocate.phoneNumber}</a>
+                  </div>
+                  <div>
+                    <span className="font-bold mr-2">Years Experience:</span>
+                    <span>{advocate.yearsOfExperience}</span>
+                  </div>
+                </div>
+                <div className="basis-2/3">
+                  <h4 className="font-bold mb-2">Specialties</h4>
+                  <div>
+                    {advocate.specialties.map((s) => (
+                      <div className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-indigo-500 text-white m-1">{s}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             );
           })}
-        </tbody>
-      </table>
+      </div>
     </main>
   );
 }
