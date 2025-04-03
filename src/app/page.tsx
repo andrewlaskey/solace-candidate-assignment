@@ -62,7 +62,7 @@ export default function Home() {
                   </div>
                   <div>
                     <span className="font-bold mr-2">Phone:</span>
-                    <a href={`tel:${advocate.phoneNumber}`}>{advocate.phoneNumber}</a>
+                    <a href={`tel:${advocate.phoneNumber}`} className="text-cyan-600">{advocate.phoneNumber}</a>
                   </div>
                   <div>
                     <span className="font-bold mr-2">Years Experience:</span>
